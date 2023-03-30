@@ -1,13 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '../../axios';
 
-export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
-  const { data } = await axios.get('/posts');
+export const fetchPosts = createAsyncThunk('posts/fetchPosts', async (sort) => {
+  const { data } = await axios.get(`/posts/${sort}`);
+  return data;
+});
+
+export const fetchPostsTag = createAsyncThunk('posts/fetchPostsTag', async (tag) => {
+  const { data } = await axios.get(`/tags/${tag}`);
   return data;
 });
 
 export const fetchTags = createAsyncThunk('posts/fetchTags', async () => {
-  const { data } = await axios.get('/tags');
+  const { data } = await axios.get(`/tags`);
   return data;
 });
 
@@ -16,6 +21,7 @@ export const fetchRemovePost = createAsyncThunk('posts/fetchRemovePost', async (
 );
 
 const initialState = {
+  typePosts: '',
   posts: {
     items: [],
     status: 'loading',
@@ -29,7 +35,11 @@ const initialState = {
 const postsSlice = createSlice({
   name: 'posts',
   initialState,
-  reducers: {},
+  reducers: {
+    setTypePosts: (state, action) => {
+      state.typePosts = action.payload;
+    },
+  },
   extraReducers: {
     //Получение статей
     [fetchPosts.pending]: (state) => {
@@ -41,6 +51,18 @@ const postsSlice = createSlice({
       state.posts.status = 'loaded';
     },
     [fetchPosts.rejected]: (state) => {
+      state.posts.items = [];
+      state.posts.status = 'error';
+    },
+    [fetchPostsTag.pending]: (state) => {
+      state.posts.items = [];
+      state.posts.status = 'loading';
+    },
+    [fetchPostsTag.fulfilled]: (state, action) => {
+      state.posts.items = action.payload;
+      state.posts.status = 'loaded';
+    },
+    [fetchPostsTag.rejected]: (state) => {
       state.posts.items = [];
       state.posts.status = 'error';
     },
@@ -63,5 +85,7 @@ const postsSlice = createSlice({
     },
   },
 });
+
+export const { setTypePosts } = postsSlice.actions;
 
 export const postsReducer = postsSlice.reducer;

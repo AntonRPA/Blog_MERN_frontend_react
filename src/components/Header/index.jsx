@@ -6,6 +6,7 @@ import styles from './Header.module.scss';
 import Container from '@mui/material/Container';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, selectIsAuth } from '../../redux/slices/auth';
+import { setTypePosts } from '../../redux/slices/posts';
 
 export const Header = () => {
   const dispatch = useDispatch();
@@ -23,7 +24,7 @@ export const Header = () => {
     <div className={styles.root}>
       <Container maxWidth="lg">
         <div className={styles.inner}>
-          <Link className={styles.logo} to="/">
+          <Link onClick={() => dispatch(setTypePosts(''))} className={styles.logo} to="/">
             <div>ARCHAKOV BLOG</div>
           </Link>
           <div className={styles.buttons}>
