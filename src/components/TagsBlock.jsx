@@ -20,7 +20,7 @@ export const TagsBlock = ({ items, isLoading = true }) => {
       <List>
         {(isLoading ? [...Array(5)] : items).map((name, i) => (
           <Link
-            onClick={(name) => dispatch(setTypePosts(name))}
+            onClick={() => dispatch(setTypePosts(name))}
             style={{ textDecoration: 'none', color: 'black' }}
             to={`/tags/${name}`}>
             <ListItem key={i} disablePadding>

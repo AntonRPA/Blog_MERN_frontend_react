@@ -8,14 +8,21 @@ import Grid from '@mui/material/Grid';
 import { Post } from '../components/Post';
 import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
-import { fetchPosts, fetchTags, fetchPostsTag, setTypePosts } from '../redux/slices/posts';
+import {
+  fetchPosts,
+  fetchTags,
+  fetchPostsTag,
+  setTypePosts,
+  fetchComments,
+} from '../redux/slices/posts';
 
 export const Home = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.auth.data);
-  const { posts, tags, typePosts } = useSelector((state) => state.posts);
+  const { posts, tags, typePosts, comments } = useSelector((state) => state.posts);
   const isPostLoading = posts.status === 'loading';
   const isTagsLoading = tags.status === 'loading';
+  const isCommentLoading = comments.status === 'loading';
   const location = useLocation();
   const { tag } = useParams(); //получаем tag из ссылки браузера
 
@@ -23,9 +30,13 @@ export const Home = () => {
     dispatch(setTypePosts(type));
   };
 
+  //Проверяем URL страницы и в зависимости от ссылки меняем state
   useEffect(() => {
     if (location.pathname === '/posts/popular') {
       changeTypePost('popular');
+    }
+    if (tag) {
+      changeTypePost(tag);
     }
   }, []);
 
@@ -36,15 +47,15 @@ export const Home = () => {
     } else {
       dispatch(fetchPosts(typePosts));
     }
-    console.log('typePosts: ', typePosts);
 
     dispatch(fetchTags('')); //получаем 5 тегов для колонки справа
+    dispatch(fetchComments(''));
   }, [typePosts]);
 
   return (
     <>
       {tag ? (
-        <h3>{tag}</h3>
+        <h3>#{tag}</h3>
       ) : (
         <Tabs
           style={{ marginBottom: 15 }}
@@ -83,7 +94,8 @@ export const Home = () => {
         </Grid>
         <Grid xs={4} item>
           <TagsBlock items={tags.items} isLoading={isTagsLoading} />
-          <CommentsBlock
+          <CommentsBlock items={comments.items} isLoading={isCommentLoading} />
+          {/* <CommentsBlock
             items={[
               {
                 user: {
@@ -101,7 +113,7 @@ export const Home = () => {
               },
             ]}
             isLoading={false}
-          />
+          /> */}
         </Grid>
       </Grid>
     </>
