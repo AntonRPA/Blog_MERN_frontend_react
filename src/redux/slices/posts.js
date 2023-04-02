@@ -25,6 +25,14 @@ export const fetchComments = createAsyncThunk('posts/fetchComments', async (id) 
   return data;
 });
 
+export const fetchCommentsQuantity = createAsyncThunk(
+  'posts/fetchCommentsQuantity',
+  async (quantity) => {
+    const { data } = await axios.get(`/comments/quantity/${quantity}`);
+    return data;
+  },
+);
+
 const initialState = {
   typePosts: '',
   posts: {
@@ -96,6 +104,18 @@ const postsSlice = createSlice({
       state.comments.status = 'loaded';
     },
     [fetchComments.rejected]: (state) => {
+      state.comments.items = [];
+      state.comments.status = 'error';
+    },
+    [fetchCommentsQuantity.pending]: (state) => {
+      state.comments.items = [];
+      state.comments.status = 'loading';
+    },
+    [fetchCommentsQuantity.fulfilled]: (state, action) => {
+      state.comments.items = action.payload;
+      state.comments.status = 'loaded';
+    },
+    [fetchCommentsQuantity.rejected]: (state) => {
       state.comments.items = [];
       state.comments.status = 'error';
     },

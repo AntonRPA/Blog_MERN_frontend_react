@@ -1,28 +1,61 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import axios from '../../axios';
 
-import styles from "./AddComment.module.scss";
+import styles from './AddComment.module.scss';
 
-import TextField from "@mui/material/TextField";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
+import TextField from '@mui/material/TextField';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+
+import { fetchComments } from '../../redux/slices/posts';
 
 export const Index = () => {
+  const { data } = useSelector((state) => state.auth);
+  const [text, setText] = useState('');
+  const [disabled, setDisabled] = useState(true);
+  const { id } = useParams(); //Получаем из адресной строки id поста
+  const dispatch = useDispatch();
+
+  const onSubmit = async () => {
+    try {
+      setDisabled(true); //блокировка кнопки "Отправить" на случай двойного клика
+      await axios.post(`/comment`, { text, post: id });
+      setText(''); //очистка поля комментарий
+      dispatch(fetchComments(id)); //повторный вызов API получения комментариев для поста
+    } catch (err) {
+      console.warn(err);
+      alert('Ошибка при создании комментария');
+    }
+  };
+
+  //Проверка что символов комментария введено больше 5
+  useEffect(() => {
+    if (text.length > 5) {
+      setDisabled(false); //Активация кнопки "Отправить"
+    } else {
+      setDisabled(true);
+    }
+  }, [text]);
+
   return (
     <>
       <div className={styles.root}>
-        <Avatar
-          classes={{ root: styles.avatar }}
-          src="https://mui.com/static/images/avatar/5.jpg"
-        />
+        <Avatar classes={{ root: styles.avatar }} src={data.avatarUrl} />
         <div className={styles.form}>
           <TextField
+            onChange={(event) => setText(event.target.value)}
+            value={text}
             label="Написать комментарий"
             variant="outlined"
             maxRows={10}
             multiline
             fullWidth
           />
-          <Button variant="contained">Отправить</Button>
+          <Button disabled={disabled} onClick={onSubmit} variant="contained">
+            Отправить
+          </Button>
         </div>
       </div>
     </>

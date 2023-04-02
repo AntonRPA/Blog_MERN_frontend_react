@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, Navigate, useParams } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
@@ -20,8 +20,15 @@ export const AddPost = () => {
   const [title, setTitle] = React.useState('');
   const [tags, setTags] = React.useState('');
   const [imageUrl, setImageUrl] = React.useState('');
+  const [disabled, setDisabled] = useState(true);
   const inputFileRef = React.useRef(null);
   const isEditing = Boolean(id); //Если редактируем статью
+
+  //Активация кнопки "Опубликовать" если все формы заполнены
+  useEffect(() => {
+    if (title.length > 5 && tags.length > 2 && text.length > 10) setDisabled(false);
+    else setDisabled(true);
+  }, [text, title, tags]);
 
   const handleChangeFile = async (event) => {
     try {
@@ -48,6 +55,7 @@ export const AddPost = () => {
 
   const onSubmit = async () => {
     try {
+      setDisabled(true);
       setIsLoading(true);
 
       const fields = {
@@ -143,7 +151,7 @@ export const AddPost = () => {
       />
       <SimpleMDE className={styles.editor} value={text} onChange={onChange} options={options} />
       <div className={styles.buttons}>
-        <Button onClick={onSubmit} size="large" variant="contained">
+        <Button disabled={disabled} onClick={onSubmit} size="large" variant="contained">
           {isEditing ? 'Сохранить' : 'Опубликовать'}
         </Button>
         <a href="/">

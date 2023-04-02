@@ -44,7 +44,7 @@ export const FullPost = () => {
         user={data.user}
         createdAt={data.createdAt}
         viewsCount={data.viewsCount}
-        commentsCount={3}
+        commentsCount={comments.items.length}
         tags={data.tags}
         isFullPost>
         <ReactMarkdown children={data.text} />

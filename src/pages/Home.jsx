@@ -13,7 +13,7 @@ import {
   fetchTags,
   fetchPostsTag,
   setTypePosts,
-  fetchComments,
+  fetchCommentsQuantity,
 } from '../redux/slices/posts';
 
 export const Home = () => {
@@ -49,7 +49,7 @@ export const Home = () => {
     }
 
     dispatch(fetchTags('')); //получаем 5 тегов для колонки справа
-    dispatch(fetchComments(''));
+    dispatch(fetchCommentsQuantity(5)); //получаем 5 комментариев последних
   }, [typePosts]);
 
   return (
@@ -85,7 +85,7 @@ export const Home = () => {
                 user={obj.user}
                 createdAt={obj.createdAt}
                 viewsCount={obj.viewsCount}
-                commentsCount={3}
+                commentsCount={obj.commentsCount}
                 tags={obj.tags}
                 isEditable={userData?._id === obj.user._id}
               />
