@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { backendUrl } from './env';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:4444',
+  baseURL: backendUrl,
 });
 
 //При каждом запросе ищем токен авторизации в localStorage

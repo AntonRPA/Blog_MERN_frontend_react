@@ -15,6 +15,7 @@ import {
   setTypePosts,
   fetchCommentsQuantity,
 } from '../redux/slices/posts';
+import { backendUrl } from '../env';
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -81,7 +82,7 @@ export const Home = () => {
                 key={obj._id}
                 id={obj._id}
                 title={obj.title}
-                imageUrl={obj.imageUrl ? `http://localhost:4444${obj.imageUrl}` : ''}
+                imageUrl={obj.imageUrl ? backendUrl + obj.imageUrl : ''}
                 user={obj.user}
                 createdAt={obj.createdAt}
                 viewsCount={obj.viewsCount}
