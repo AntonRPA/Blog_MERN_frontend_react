@@ -43,7 +43,7 @@ export const AddPost = () => {
       alert('Ошибка при загрузке файла');
     }
   };
-
+  //
   const onClickRemoveImage = () => {
     if (window.confirm('Подтверждаете удаление изображения?')) {
       setImageUrl('');
