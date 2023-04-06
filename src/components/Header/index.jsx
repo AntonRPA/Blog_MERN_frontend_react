@@ -25,7 +25,7 @@ export const Header = () => {
       <Container maxWidth="lg">
         <div className={styles.inner}>
           <Link onClick={() => dispatch(setTypePosts(''))} className={styles.logo} to="/">
-            <div>ANTONRPA BLOG</div>
+            <div>ANTONRPA MERN BLOG</div>
           </Link>
           <div className={styles.buttons}>
             {isAuth ? (

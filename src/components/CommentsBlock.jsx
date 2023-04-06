@@ -31,7 +31,7 @@ export const CommentsBlock = ({ items, children, isLoading }) => {
                 </div>
               ) : (
                 <>
-                  {console.log(obj)}
+                  {/* {console.log(obj)} */}
                   <ListItemText primary={obj.user.fullName} secondary={obj.text} />
                 </>
               )}
