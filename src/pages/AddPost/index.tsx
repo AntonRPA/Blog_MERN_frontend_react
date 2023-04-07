@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigate, Navigate, useParams } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
@@ -11,18 +10,19 @@ import 'easymde/dist/easymde.min.css';
 import styles from './AddPost.module.scss';
 import { selectIsAuth } from '../../redux/slices/auth';
 import { backendUrl } from '../../env';
+import { useAppSelector } from '../../redux/store';
 
-export const AddPost = () => {
+export const AddPost: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const isAuth = useSelector(selectIsAuth);
+  const isAuth = useAppSelector(selectIsAuth);
   const [isLoading, setIsLoading] = React.useState(false);
   const [text, setText] = React.useState('');
   const [title, setTitle] = React.useState('');
   const [tags, setTags] = React.useState('');
   const [imageUrl, setImageUrl] = React.useState('');
   const [disabled, setDisabled] = useState(true);
-  const inputFileRef = React.useRef(null);
+  const inputFileRef = React.useRef<HTMLInputElement>(null);
   const isEditing = Boolean(id); //Если редактируем статью
 
   //Активация кнопки "Опубликовать" если все формы заполнены
@@ -31,11 +31,13 @@ export const AddPost = () => {
     else setDisabled(true);
   }, [text, title, tags]);
 
-  const handleChangeFile = async (event) => {
+  const handleChangeFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       const formData = new FormData();
-      const file = event.target.files[0];
-      formData.append('image', file);
+      const file = event.target.files?.[0];
+      if (file) {
+        formData.append('image', file);
+      }
       const { data } = await axios.post('/upload', formData);
       setImageUrl(data.url);
     } catch (err) {
@@ -50,7 +52,7 @@ export const AddPost = () => {
     }
   };
 
-  const onChange = React.useCallback((value) => {
+  const onChange = React.useCallback((value: string) => {
     setText(value);
   }, []);
 
@@ -118,7 +120,7 @@ export const AddPost = () => {
   return (
     <Paper style={{ padding: 30 }}>
       <Button
-        onClick={() => inputFileRef.current.click() /*вызов input*/}
+        onClick={() => inputFileRef.current?.click() /*вызов input*/}
         variant="outlined"
         size="large">
         Загрузить превью
@@ -150,7 +152,13 @@ export const AddPost = () => {
         placeholder="Тэги"
         fullWidth
       />
-      <SimpleMDE className={styles.editor} value={text} onChange={onChange} options={options} />
+      <SimpleMDE
+        className={styles.editor}
+        value={text}
+        onChange={onChange}
+        // @ts-ignore: Не удалось типизировать options
+        options={options}
+      />
       <div className={styles.buttons}>
         <Button disabled={disabled} onClick={onSubmit} size="large" variant="contained">
           {isEditing ? 'Сохранить' : 'Опубликовать'}
