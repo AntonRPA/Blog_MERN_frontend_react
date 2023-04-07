@@ -1,5 +1,4 @@
 import { Routes, Route } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import Container from '@mui/material/Container';
 
 import { Header } from './components';

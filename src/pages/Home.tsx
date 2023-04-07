@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -16,18 +15,19 @@ import {
   fetchCommentsQuantity,
 } from '../redux/slices/posts';
 import { backendUrl } from '../env';
+import { useAppDispatch, useAppSelector } from '../redux/store';
 
-export const Home = () => {
-  const dispatch = useDispatch();
-  const userData = useSelector((state) => state.auth.data);
-  const { posts, tags, typePosts, comments } = useSelector((state) => state.posts);
+export const Home: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const userData = useAppSelector((state) => state.auth.data);
+  const { posts, tags, typePosts, comments } = useAppSelector((state) => state.posts);
   const isPostLoading = posts.status === 'loading';
   const isTagsLoading = tags.status === 'loading';
   const isCommentLoading = comments.status === 'loading';
   const location = useLocation();
   const { tag } = useParams(); //получаем tag из ссылки браузера
 
-  const changeTypePost = (type) => {
+  const changeTypePost = (type: string) => {
     dispatch(setTypePosts(type));
   };
 
@@ -49,7 +49,7 @@ export const Home = () => {
       dispatch(fetchPosts(typePosts));
     }
 
-    dispatch(fetchTags('')); //получаем 5 тегов для колонки справа
+    dispatch(fetchTags()); //получаем 5 тегов для колонки справа
     dispatch(fetchCommentsQuantity(5)); //получаем 5 комментариев последних
   }, [typePosts]);
 
@@ -80,14 +80,8 @@ export const Home = () => {
             ) : (
               <Post
                 key={obj._id}
-                id={obj._id}
-                title={obj.title}
-                imageUrl={obj.imageUrl ? backendUrl + obj.imageUrl : ''}
-                user={obj.user}
-                createdAt={obj.createdAt}
-                viewsCount={obj.viewsCount}
+                data={obj}
                 commentsCount={obj.commentsCount}
-                tags={obj.tags}
                 isEditable={userData?._id === obj.user._id}
               />
             ),

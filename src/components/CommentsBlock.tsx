@@ -8,8 +8,19 @@ import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import Skeleton from '@mui/material/Skeleton';
+import { TItemscomment } from '../redux/slices/posts';
 
-export const CommentsBlock = ({ items, children, isLoading }) => {
+type TCommentsBlockProps = {
+  items: TItemscomment[];
+  children?: any;
+  isLoading: boolean;
+};
+
+export const CommentsBlock: React.FunctionComponent<TCommentsBlockProps> = ({
+  items,
+  children,
+  isLoading,
+}) => {
   // console.log(items);
   return (
     <SideBlock title="Комментарии">

@@ -13,7 +13,12 @@ import Skeleton from '@mui/material/Skeleton';
 import { SideBlock } from './SideBlock';
 import { setTypePosts } from '../redux/slices/posts';
 
-export const TagsBlock = ({ items, isLoading = true }) => {
+type TTagsBlockProps = {
+  items: String[];
+  isLoading: Boolean;
+};
+
+export const TagsBlock: React.FC<TTagsBlockProps> = ({ items, isLoading = true }) => {
   const dispatch = useDispatch();
   return (
     <SideBlock title="Тэги">

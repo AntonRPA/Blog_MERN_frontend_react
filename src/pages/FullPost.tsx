@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 
 import { Post } from '../components/Post';
 import { Index } from '../components/AddComment';
 import { CommentsBlock } from '../components/CommentsBlock';
 import axios from '../axios';
 import ReactMarkdown from 'react-markdown';
-import { fetchComments } from '../redux/slices/posts';
-import { backendUrl } from '../env';
+import { TItemsPost, fetchComments } from '../redux/slices/posts';
+import { useAppDispatch, useAppSelector } from '../redux/store';
 
-export const FullPost = () => {
-  const [data, setData] = useState();
+export const FullPost: React.FC = () => {
+  const [data, setData] = useState<TItemsPost>();
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams();
-  const dispatch = useDispatch();
-  const { comments } = useSelector((state) => state.posts);
+  const dispatch = useAppDispatch();
+  const { comments } = useAppSelector((state) => state.posts);
   const isCommentLoading = comments.status === 'loading';
 
   useEffect(() => {
@@ -29,7 +28,7 @@ export const FullPost = () => {
         console.warn(err);
         alert('Ошибка получения данных статьи');
       });
-    dispatch(fetchComments(id));
+    dispatch(fetchComments(Number(id)));
   }, []);
 
   if (isLoading) {
@@ -38,18 +37,14 @@ export const FullPost = () => {
 
   return (
     <>
-      <Post
-        id={data._id}
-        title={data.title}
-        imageUrl={data.imageUrl ? backendUrl + data.imageUrl : ''}
-        user={data.user}
-        createdAt={data.createdAt}
-        viewsCount={data.viewsCount}
-        commentsCount={comments.items.length}
-        tags={data.tags}
-        isFullPost>
-        <ReactMarkdown children={data.text} />
-      </Post>
+      {data ? (
+        <Post data={data} commentsCount={comments.items.length} isFullPost>
+          <ReactMarkdown children={data.text} />
+        </Post>
+      ) : (
+        ''
+      )}
+
       <CommentsBlock items={comments.items} isLoading={isCommentLoading}>
         {/* // items={[
         //   {

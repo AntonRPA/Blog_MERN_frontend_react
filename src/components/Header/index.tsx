@@ -4,13 +4,13 @@ import Button from '@mui/material/Button';
 
 import styles from './Header.module.scss';
 import Container from '@mui/material/Container';
-import { useDispatch, useSelector } from 'react-redux';
 import { logout, selectIsAuth } from '../../redux/slices/auth';
 import { setTypePosts } from '../../redux/slices/posts';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
 
-export const Header = () => {
-  const dispatch = useDispatch();
-  const isAuth = useSelector(selectIsAuth);
+export const Header: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const isAuth = useAppSelector(selectIsAuth);
 
   //logout - Выйти из аккаунта
   const onClickLogout = () => {

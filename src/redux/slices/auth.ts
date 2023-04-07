@@ -1,31 +1,38 @@
 import {
   createSlice,
   createAsyncThunk,
-  ActionReducerMapBuilder,
-  AsyncThunk,
+  // ActionReducerMapBuilder,
+  // AsyncThunk,
 } from '@reduxjs/toolkit';
 import axios from '../../axios';
 import { RootState } from '../store';
 
 //Типизация initialState
 interface IAuthSliceState {
-  data: TAuth | null;
+  data: TAuthReturn | null;
   status: Status; //loading | loaded | error
 }
 
-//Типизация объекта запроса пользователя
-type TAuth = {
-  _id: Number;
-  fullName: String;
-  email: String;
-  avatarUrl: String;
-  token?: String;
+//Типизация объекта получаемого о пользователе
+type TAuthReturn = {
+  _id: number;
+  fullName: string;
+  email: string;
+  avatarUrl?: string; //Для запроса: /auth/me
+  token?: string; //Для запросов: /auth/login; /auth/register
 };
 
+//Типизация объекта отправляемого для авторизации
+type TAuth = {
+  email: string;
+  password: string;
+};
+
+//Типизация объекта отправляемого для регистрации
 type TRegister = {
-  email: String;
-  password: String;
-  fullName: String;
+  email: string;
+  password: string;
+  fullName: string;
 };
 
 // enum - можно использовать в TypeScript. Объект нельзяы
@@ -36,12 +43,12 @@ export enum Status {
   NOT_FOUND = 'not_found',
 }
 
-export const fetchAuth = createAsyncThunk<TAuth>('auth/fetchAuth', async (params) => {
+export const fetchAuth = createAsyncThunk<TAuthReturn, TAuth>('auth/fetchAuth', async (params) => {
   const { data } = await axios.post('/auth/login', params);
   return data;
 });
 
-export const fetchRegister = createAsyncThunk<TAuth, TRegister>(
+export const fetchRegister = createAsyncThunk<TAuthReturn, TRegister>(
   'auth/fetchRegister',
   async (params) => {
     const { data } = await axios.post('/auth/register', params);
@@ -49,8 +56,8 @@ export const fetchRegister = createAsyncThunk<TAuth, TRegister>(
   },
 );
 
-export const fetchAuthMe = createAsyncThunk<TAuth>('auth/fetchAuthMe', async () => {
-  const { data } = await axios.get<TAuth>('/auth/me');
+export const fetchAuthMe = createAsyncThunk<TAuthReturn>('auth/fetchAuthMe', async () => {
+  const { data } = await axios.get<TAuthReturn>('/auth/me');
   return data;
 });
 
@@ -68,9 +75,39 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    authExtraReducer(builder, fetchAuth, 'Ошибка при попытки авторизации');
-    authExtraReducer(builder, fetchAuthMe, 'Ошибка при проверке пользователя в БД');
+    //Авторизация
+    builder
+      .addCase(fetchAuth.pending, (state) => {
+        state.data = null;
+        state.status = Status.LOADING;
+      })
+      .addCase(fetchAuth.fulfilled, (state, action) => {
+        state.data = action.payload;
+        state.status = Status.SUCCESS;
+      })
+      .addCase(fetchAuth.rejected, (state) => {
+        console.log(state, 'Ошибка при попытки авторизации');
+        state.data = null;
+        state.status = Status.ERROR;
+      });
 
+    //Проверка  пользователя по токену
+    builder
+      .addCase(fetchAuthMe.pending, (state) => {
+        state.data = null;
+        state.status = Status.LOADING;
+      })
+      .addCase(fetchAuthMe.fulfilled, (state, action) => {
+        state.data = action.payload;
+        state.status = Status.SUCCESS;
+      })
+      .addCase(fetchAuthMe.rejected, (state) => {
+        console.log(state, 'Ошибка при проверке пользователя в БД');
+        state.data = null;
+        state.status = Status.ERROR;
+      });
+
+    //Создание пользователя
     builder
       .addCase(fetchRegister.pending, (state) => {
         state.data = null;
@@ -88,26 +125,26 @@ const authSlice = createSlice({
   },
 });
 
-function authExtraReducer(
-  builder: ActionReducerMapBuilder<IAuthSliceState>,
-  asyncThunk: AsyncThunk<TAuth, void, {}>,
-  errorMessage: string,
-): void {
-  builder
-    .addCase(asyncThunk.pending, (state) => {
-      state.data = null;
-      state.status = Status.LOADING;
-    })
-    .addCase(asyncThunk.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.status = Status.SUCCESS;
-    })
-    .addCase(asyncThunk.rejected, (state) => {
-      console.log(state, errorMessage);
-      state.data = null;
-      state.status = Status.ERROR;
-    });
-}
+// function authExtraReducer(
+//   builder: ActionReducerMapBuilder<IAuthSliceState>,
+//   asyncThunk: AsyncThunk<TAuthReturn, TAuth, {}>,
+//   errorMessage: string,
+// ): void {
+//   builder
+//     .addCase(asyncThunk.pending, (state) => {
+//       state.data = null;
+//       state.status = Status.LOADING;
+//     })
+//     .addCase(asyncThunk.fulfilled, (state, action) => {
+//       state.data = action.payload;
+//       state.status = Status.SUCCESS;
+//     })
+//     .addCase(asyncThunk.rejected, (state) => {
+//       console.log(state, errorMessage);
+//       state.data = null;
+//       state.status = Status.ERROR;
+//     });
+// }
 
 export const selectIsAuth = (state: RootState) => Boolean(state.auth.data);
 

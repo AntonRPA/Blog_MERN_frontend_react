@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import axios from '../../axios';
 
@@ -10,20 +9,21 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 
 import { fetchComments } from '../../redux/slices/posts';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
 
-export const Index = () => {
-  const { data } = useSelector((state) => state.auth);
+export const Index: React.FC = () => {
+  const { data } = useAppSelector((state) => state.auth);
   const [text, setText] = useState('');
   const [disabled, setDisabled] = useState(true);
   const { id } = useParams(); //Получаем из адресной строки id поста
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const onSubmit = async () => {
     try {
       setDisabled(true); //блокировка кнопки "Отправить" на случай двойного клика
       await axios.post(`/comment`, { text, post: id });
       setText(''); //очистка поля комментарий
-      dispatch(fetchComments(id)); //повторный вызов API получения комментариев для поста
+      dispatch(fetchComments(Number(id))); //повторный вызов API получения комментариев для поста
     } catch (err) {
       console.warn(err);
       alert('Ошибка при создании комментария');
@@ -42,7 +42,7 @@ export const Index = () => {
   return (
     <>
       <div className={styles.root}>
-        <Avatar classes={{ root: styles.avatar }} src={data.avatarUrl} />
+        <Avatar classes={{ root: styles.avatar }} src={data ? data.avatarUrl : ''} />
         <div className={styles.form}>
           <TextField
             onChange={(event) => setText(event.target.value)}

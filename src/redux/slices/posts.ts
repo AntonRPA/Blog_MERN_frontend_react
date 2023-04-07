@@ -11,13 +11,13 @@ export enum Status {
 
 //interface присваевается без "=" для initialState
 interface IPostSliceState {
-  typePosts: String;
+  typePosts: string;
   posts: {
     items: TItemsPost[];
     status: Status;
   };
   tags: {
-    items: String[];
+    items: string[];
     status: Status;
   };
   comments: {
@@ -26,30 +26,30 @@ interface IPostSliceState {
   };
 }
 
-type TItemsPost = {
-  _id: Number;
-  commentsCount: Number;
+export type TItemsPost = {
+  _id: number;
+  commentsCount: number;
   createdAt: Date;
-  imageUrl: String;
-  tags: String[];
-  text: String;
-  title: String;
+  imageUrl: string;
+  tags: string[];
+  text: string;
+  title: string;
   updatedAt: Date;
   user: TUser;
-  viewsCount: Number;
+  viewsCount: number;
 };
 
 type TUser = {
-  _id: Number;
-  avatarUrl: String;
-  fullName: String;
+  _id: number;
+  avatarUrl: string;
+  fullName: string;
 };
 
-type TItemscomment = {
-  _id: Number;
+export type TItemscomment = {
+  _id: number;
   createdAt: Date;
   post: TItemsPost['_id'];
-  text: String;
+  text: string;
   updatedAt: Date;
   user: TUser;
 };
@@ -59,8 +59,8 @@ export const fetchPosts = createAsyncThunk<TItemsPost[], String, { rejectValue: 
   'posts/fetchPosts',
   async (sort, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get(`/posts/${sort}`);
-      return data as TItemsPost[];
+      const { data } = await axios.get<TItemsPost[]>(`/posts/${sort}`);
+      return data;
     } catch (error: any) {
       console.warn('Ошибка получения новых постов, либо популярных');
       return rejectWithValue(error);
@@ -73,8 +73,8 @@ export const fetchPostsTag = createAsyncThunk<TItemsPost[], String, { rejectValu
   'posts/',
   async (tag, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get(`/tags/${tag}`);
-      return data as TItemsPost[];
+      const { data } = await axios.get<TItemsPost[]>(`/tags/${tag}`);
+      return data;
     } catch (error: any) {
       console.warn('Ошибка получения новых постов содеражащих тег');
       return rejectWithValue(error);
@@ -87,8 +87,8 @@ export const fetchTags = createAsyncThunk<TItemsPost['tags'], undefined, { rejec
   'posts/fetchTags',
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get(`/tags`);
-      return data as TItemsPost['tags'];
+      const { data } = await axios.get<TItemsPost['tags']>(`/tags`);
+      return data;
     } catch (error: any) {
       console.warn('Ошибка получения всех тегов');
       return rejectWithValue(error);
@@ -118,8 +118,8 @@ export const fetchComments = createAsyncThunk<
   { rejectValue: string }
 >('posts/fetchComments', async (id, { rejectWithValue }) => {
   try {
-    const { data } = await axios.get(`/comments/${id}`);
-    return data as TItemscomment[];
+    const { data } = await axios.get<TItemscomment[]>(`/comments/${id}`);
+    return data;
   } catch (error: any) {
     console.warn('Ошибка получения всех комментариев, либо комментариев к посту по id');
     return rejectWithValue(error);
@@ -133,8 +133,8 @@ export const fetchCommentsQuantity = createAsyncThunk<
   { rejectValue: string }
 >('posts/fetchCommentsQuantity', async (quantity, { rejectWithValue }) => {
   try {
-    const { data } = await axios.get(`/comments/quantity/${quantity}`);
-    return data as TItemscomment[];
+    const { data } = await axios.get<TItemscomment[]>(`/comments/quantity/${quantity}`);
+    return data;
   } catch (error: any) {
     console.warn('Ошибка получения указанного количества комментариев');
     return rejectWithValue(error);
