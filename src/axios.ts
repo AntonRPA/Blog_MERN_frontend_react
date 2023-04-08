@@ -7,8 +7,10 @@ const instance = axios.create({
 
 //При каждом запросе ищем токен авторизации в localStorage
 instance.interceptors.request.use((config) => {
-  config.headers.Authorization = window.localStorage.getItem('token');
-  return config;
+  if (config.headers) {
+    config.headers.Authorization = window.localStorage.getItem('token') as string;
+    return config;
+  }
 });
 
 export default instance;

@@ -16,12 +16,11 @@ export const AddPost: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isAuth = useAppSelector(selectIsAuth);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [text, setText] = React.useState('');
-  const [title, setTitle] = React.useState('');
-  const [tags, setTags] = React.useState('');
-  const [imageUrl, setImageUrl] = React.useState('');
-  const [disabled, setDisabled] = useState(true);
+  const [text, setText] = React.useState<string>('');
+  const [title, setTitle] = React.useState<string>('');
+  const [tags, setTags] = React.useState<string>('');
+  const [imageUrl, setImageUrl] = React.useState<string>('');
+  const [disabled, setDisabled] = useState<boolean>(true);
   const inputFileRef = React.useRef<HTMLInputElement>(null);
   const isEditing = Boolean(id); //Если редактируем статью
 
@@ -33,7 +32,7 @@ export const AddPost: React.FC = () => {
 
   const handleChangeFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      const formData = new FormData();
+      const formData = new FormData(); //Специальный метод для отправки файлов на бэкенд
       const file = event.target.files?.[0];
       if (file) {
         formData.append('image', file);
@@ -59,7 +58,6 @@ export const AddPost: React.FC = () => {
   const onSubmit = async () => {
     try {
       setDisabled(true);
-      setIsLoading(true);
 
       const fields = {
         title,
@@ -113,14 +111,19 @@ export const AddPost: React.FC = () => {
     [],
   );
 
+  //Если нет токена и пользователь не авторизован, то редиректить на главную
   if (!window.localStorage.getItem('token') && !isAuth) {
     return <Navigate to="/" />;
   }
 
+  // if (isLoading) {
+  //   return <>Создание статьи...</>;
+  // }
+
   return (
     <Paper style={{ padding: 30 }}>
       <Button
-        onClick={() => inputFileRef.current?.click() /*вызов input*/}
+        onClick={() => inputFileRef.current?.click() /*вызов input скрытый*/}
         variant="outlined"
         size="large">
         Загрузить превью

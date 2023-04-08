@@ -14,24 +14,22 @@ interface IAuthSliceState {
 }
 
 //Типизация объекта получаемого о пользователе
-type TAuthReturn = {
+export type TAuthReturn = {
   _id: number;
   fullName: string;
-  email: string;
-  avatarUrl?: string; //Для запроса: /auth/me
-  token?: string; //Для запросов: /auth/login; /auth/register
+  email: TAuth['email'];
+  avatarUrl: string; //Для запроса: /auth/me
+  token: string; //Для запросов: /auth/login; /auth/register
 };
 
 //Типизация объекта отправляемого для авторизации
-type TAuth = {
+export type TAuth = {
   email: string;
   password: string;
 };
 
 //Типизация объекта отправляемого для регистрации
-type TRegister = {
-  email: string;
-  password: string;
+export type TRegister = TAuth & {
   fullName: string;
 };
 

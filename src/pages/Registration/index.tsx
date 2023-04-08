@@ -1,6 +1,5 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -9,11 +8,12 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 
 import styles from './Login.module.scss';
-import { fetchRegister, selectIsAuth } from '../../redux/slices/auth';
+import { TAuthReturn, TRegister, fetchRegister, selectIsAuth } from '../../redux/slices/auth';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
 
-export const Registration = () => {
-  const dispatch = useDispatch();
-  const isAuth = useSelector(selectIsAuth);
+export const Registration: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const isAuth = useAppSelector(selectIsAuth);
 
   const {
     register,
@@ -28,7 +28,7 @@ export const Registration = () => {
     mode: 'onBlur',
   });
 
-  const onSubmit = async (values) => {
+  const onSubmit = async (values: TRegister) => {
     //Запрос на бэкенд для создания нового пользователя
     const data = await dispatch(fetchRegister(values));
 
@@ -38,8 +38,9 @@ export const Registration = () => {
     }
 
     //Сохранение токена в localStorage
+    // @ts-ignore: баг TS https://github.com/microsoft/TypeScript/issues/51501
     if ('token' in data.payload) {
-      window.localStorage.setItem('token', data.payload.token);
+      window.localStorage.setItem('token', data.payload.token as TAuthReturn['token']);
     }
   };
 
