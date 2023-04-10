@@ -12,7 +12,7 @@ import { selectIsAuth } from '../../redux/slices/auth';
 import { backendUrl } from '../../env';
 import { useAppSelector } from '../../redux/store';
 
-export const AddPost: React.FC = () => {
+const AddPost: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isAuth = useAppSelector(selectIsAuth);
@@ -57,7 +57,7 @@ export const AddPost: React.FC = () => {
 
   const onSubmit = async () => {
     try {
-      setDisabled(true);
+      setDisabled(true); //Отключаем кнопку "Опубликовать"
 
       const fields = {
         title,
@@ -121,7 +121,7 @@ export const AddPost: React.FC = () => {
   // }
 
   return (
-    <Paper style={{ padding: 30 }}>
+    <Paper elevation={0} style={{ padding: 30 }}>
       <Button
         onClick={() => inputFileRef.current?.click() /*вызов input скрытый*/}
         variant="outlined"
@@ -167,9 +167,13 @@ export const AddPost: React.FC = () => {
           {isEditing ? 'Сохранить' : 'Опубликовать'}
         </Button>
         <a href="/">
-          <Button size="large">Отмена</Button>
+          <Button variant="outlined" size="large">
+            Отмена
+          </Button>
         </a>
       </div>
     </Paper>
   );
 };
+
+export default AddPost;

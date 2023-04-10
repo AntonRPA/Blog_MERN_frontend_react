@@ -1,5 +1,5 @@
-export { Home } from './Home';
-export { FullPost } from './FullPost';
-export { AddPost } from './AddPost';
-export { Registration } from './Registration';
-export { Login } from './Login';
+export { default as Home } from './Home';
+export { default as FullPost } from './FullPost';
+export { default as AddPost } from './AddPost';
+export { default as Registration } from './Registration';
+export { default as Login } from './Login';

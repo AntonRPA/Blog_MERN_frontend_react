@@ -11,7 +11,7 @@ import Button from '@mui/material/Button';
 import { fetchComments } from '../../redux/slices/posts';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 
-export const Index: React.FC = () => {
+export const AddComment: React.FC = () => {
   const { data } = useAppSelector((state) => state.auth);
   const [text, setText] = useState('');
   const [disabled, setDisabled] = useState(true);
@@ -23,7 +23,7 @@ export const Index: React.FC = () => {
       setDisabled(true); //блокировка кнопки "Отправить" на случай двойного клика
       await axios.post(`/comment`, { text, post: id });
       setText(''); //очистка поля комментарий
-      dispatch(fetchComments(Number(id))); //повторный вызов API получения комментариев для поста
+      if (id) dispatch(fetchComments(id)); //повторный вызов API получения комментариев для поста
     } catch (err) {
       console.warn(err);
       alert('Ошибка при создании комментария');

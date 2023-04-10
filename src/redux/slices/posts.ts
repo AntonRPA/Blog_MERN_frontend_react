@@ -27,7 +27,7 @@ interface IPostSliceState {
 }
 
 export type TItemsPost = {
-  _id: number;
+  _id: string;
   commentsCount: number;
   createdAt: Date;
   imageUrl: string;
@@ -40,13 +40,13 @@ export type TItemsPost = {
 };
 
 type TUser = {
-  _id: number;
+  _id: string;
   avatarUrl: string;
   fullName: string;
 };
 
 export type TItemscomment = {
-  _id: number;
+  _id: string;
   createdAt: Date;
   post: TItemsPost['_id'];
   text: string;

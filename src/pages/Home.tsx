@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -14,10 +14,9 @@ import {
   setTypePosts,
   fetchCommentsQuantity,
 } from '../redux/slices/posts';
-import { backendUrl } from '../env';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 
-export const Home: React.FC = () => {
+const Home: React.FC = () => {
   const dispatch = useAppDispatch();
   const userData = useAppSelector((state) => state.auth.data);
   const { posts, tags, typePosts, comments } = useAppSelector((state) => state.posts);
@@ -25,33 +24,38 @@ export const Home: React.FC = () => {
   const isTagsLoading = tags.status === 'loading';
   const isCommentLoading = comments.status === 'loading';
   const location = useLocation();
+  const firstRender = useRef(true); //Проверка первый рендер или нет. Нужно для проверки пути в адресной строке
   const { tag } = useParams(); //получаем tag из ссылки браузера
 
   const changeTypePost = (type: string) => {
     dispatch(setTypePosts(type));
   };
 
-  //Проверяем URL страницы и в зависимости от ссылки меняем state
-  useEffect(() => {
-    if (location.pathname === '/posts/popular') {
-      changeTypePost('popular');
-    }
-    if (tag) {
-      changeTypePost(tag);
-    }
-  }, []);
-
   React.useEffect(() => {
-    //Если tag не false, то загружаем посты по тегу. Иначе загружаем посты по сортировке
-    if (tag) {
-      dispatch(fetchPostsTag(tag));
+    if (firstRender.current) {
+      //Проверяем URL страницы и в зависимости от ссылки меняем state
+      if (location.pathname === '/posts/popular') {
+        changeTypePost('popular');
+      }
+      if (tag) {
+        changeTypePost(tag);
+      }
+      firstRender.current = false;
     } else {
-      dispatch(fetchPosts(typePosts));
-    }
+      //Если tag не false, то загружаем посты по тегу. Иначе загружаем посты по сортировке
+      if (tag) {
+        dispatch(fetchPostsTag(tag));
+      } else {
+        dispatch(fetchPosts(typePosts));
+      }
 
-    dispatch(fetchTags()); //получаем 5 тегов для колонки справа
-    dispatch(fetchCommentsQuantity(5)); //получаем 5 комментариев последних
+      dispatch(fetchTags()); //получаем 5 тегов для колонки справа
+      dispatch(fetchCommentsQuantity(5)); //получаем 5 комментариев последних
+    }
   }, [typePosts]);
+
+  // console.log(tags.items);
+  // console.log(comments.items);
 
   return (
     <>
@@ -90,27 +94,10 @@ export const Home: React.FC = () => {
         <Grid xs={4} item>
           <TagsBlock items={tags.items} isLoading={isTagsLoading} />
           <CommentsBlock items={comments.items} isLoading={isCommentLoading} />
-          {/* <CommentsBlock
-            items={[
-              {
-                user: {
-                  fullName: 'Вася Пупкин',
-                  avatarUrl: 'https://mui.com/static/images/avatar/1.jpg',
-                },
-                text: 'Это тестовый комментарий',
-              },
-              {
-                user: {
-                  fullName: 'Иван Иванов',
-                  avatarUrl: 'https://mui.com/static/images/avatar/2.jpg',
-                },
-                text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top',
-              },
-            ]}
-            isLoading={false}
-          /> */}
         </Grid>
       </Grid>
     </>
   );
 };
+
+export default Home;

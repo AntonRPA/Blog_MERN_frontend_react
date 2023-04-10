@@ -10,7 +10,7 @@ type TSideBlock = {
 
 export const SideBlock: React.FunctionComponent<TSideBlock> = ({ title, children }) => {
   return (
-    <Paper classes={{ root: styles.root }}>
+    <Paper elevation={0} classes={{ root: styles.root }}>
       <Typography variant="h6" classes={{ root: styles.title }}>
         {title}
       </Typography>

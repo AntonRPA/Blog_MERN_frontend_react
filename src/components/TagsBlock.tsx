@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useWhyDidYouUpdate } from 'ahooks';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -18,8 +19,10 @@ type TTagsBlockProps = {
   isLoading: Boolean;
 };
 
-export const TagsBlock: React.FC<TTagsBlockProps> = ({ items, isLoading = true }) => {
+export const TagsBlock: React.FC<TTagsBlockProps> = React.memo(({ items, isLoading = true }) => {
+  // useWhyDidYouUpdate('TagsBlock', { items, isLoading: true });
   const dispatch = useDispatch();
+
   return (
     <SideBlock title="Тэги">
       <List>
@@ -42,4 +45,4 @@ export const TagsBlock: React.FC<TTagsBlockProps> = ({ items, isLoading = true }
       </List>
     </SideBlock>
   );
-};
+});

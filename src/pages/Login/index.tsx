@@ -10,7 +10,7 @@ import styles from './Login.module.scss';
 import { TAuth, TAuthReturn, fetchAuth, selectIsAuth } from '../../redux/slices/auth';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 
-export const Login: React.FC = () => {
+const Login: React.FC = () => {
   const dispatch = useAppDispatch();
   const isAuth = useAppSelector(selectIsAuth);
 
@@ -50,7 +50,7 @@ export const Login: React.FC = () => {
   }
 
   return (
-    <Paper classes={{ root: styles.root }}>
+    <Paper elevation={0} classes={{ root: styles.root }}>
       <Typography classes={{ root: styles.title }} variant="h5">
         Вход в аккаунт
       </Typography>
@@ -79,3 +79,5 @@ export const Login: React.FC = () => {
     </Paper>
   );
 };
+
+export default Login;

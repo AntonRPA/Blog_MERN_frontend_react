@@ -15,7 +15,7 @@ interface IAuthSliceState {
 
 //Типизация объекта получаемого о пользователе
 export type TAuthReturn = {
-  _id: number;
+  _id: string;
   fullName: string;
   email: TAuth['email'];
   avatarUrl: string; //Для запроса: /auth/me
